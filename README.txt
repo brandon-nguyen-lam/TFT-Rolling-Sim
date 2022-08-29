@@ -22,3 +22,5 @@ For those who do not play TFT, each shop has 5 units in them. The champion pool 
 there are only a specific amount of that one champion per its cost. The two main factors
 in determining what is inside your shop. Your level, which increases the odds of higher cost
 champions appearing and the other champions in and out of the pool
+
+![Alt text](src/RollingOddsPerLevel.jpg?raw=true "Odds")
