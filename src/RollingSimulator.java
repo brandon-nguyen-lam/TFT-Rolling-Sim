@@ -28,13 +28,7 @@ public class RollingSimulator {
     champions appearing and the other champions in and out of the pool
 
      */
-    public Unit s1 = new Unit("Karma", 1,2);
-    public Unit s2 = new Unit("Karma", 1,2);
-    public Unit s3 = new Unit("Karma", 1,2);
-    public Unit s4 = new Unit("Karma", 1,2);
-    public Unit s5 = new Unit("Karma", 1,2);
-    public Unit[] shop = new Unit[] {s1,s2,s3,s4,s5};
-    public Unit[] shop2 = new Unit[5];
+    public Unit[] shop = new Unit[5];
     public int level; // Decided to make all vars public instead of private because I was too lazy to do getters / setters
     public int oneCostOdds;
     public int twoCostOdds;
@@ -66,7 +60,7 @@ public class RollingSimulator {
     public static void main(String[] args) {
         // ADD SCANNER INPUT HERE TO ASK FOR LEVELS 6-9
         // ADD CHECKER TO MAKE SURE THEY GET IT CORRECT
-        RollingSimulator sim = new RollingSimulator(9);
+        RollingSimulator sim = new RollingSimulator(7);
         sim.setShopOdds(sim.level);
         System.out.println("You are rolling at level " + sim.level + " with:");
         System.out.println(sim.oneCostOdds + "% odds for a 1 cost");
@@ -74,14 +68,13 @@ public class RollingSimulator {
         System.out.println(sim.threeCostOdds + "% odds for a 3 cost");
         System.out.println(sim.fourCostOdds + "% odds for a 4 cost");
         System.out.println(sim.fiveCostOdds + "% odds for a 5 cost");
-        int x = sim.rollUnit(1);
-        System.out.println(sim.oneCostNames[x]);
-        int x2 = sim.rollUnit(2);
-        System.out.println(sim.twoCostNames[x2]);
-        int x3 = sim.rollUnit(3);
-        System.out.println(sim.threeCostNames[x3]);
-        int x4 = sim.rollUnit(4);
-        System.out.println(sim.fourCostNames[x4]);
+
+        for (int i = 0; i < 5; i++){
+            int unitCost = sim.rollCost(sim.level);
+            String unitRoll = sim.rollUnit(unitCost);
+            Unit shopUnit = new Unit(unitRoll, unitCost, 1);
+            sim.shop[i] = shopUnit;
+        }
 
 
 
@@ -129,36 +122,90 @@ public class RollingSimulator {
 
     public int rollCost(int level){
         // RNG pick number from 0 to 99.
+        if (level == 6) {
+            int rand = new Random().nextInt(100);
+            if (rand >= 0 && rand <= 24) {
+                return 1;
+            } else if (rand >= 25 && rand <= 64) {
+                return 2;
+            } else if (rand >= 65 && rand <= 94) {
+                return 3;
+            } else if (rand >= 95 && rand <= 99) {
+                return 4;
+            }
+
+        } else if (level == 7) {
+            int rand = new Random().nextInt(100);
+            if (rand >= 0 && rand <= 18) {
+                return 1;
+            } else if (rand >= 19 && rand <= 48) {
+                return 2;
+            } else if (rand >= 49 && rand <= 83) {
+                return 3;
+            } else if (rand >= 84 && rand <= 98) {
+                return 4;
+            } else if (rand == 99){
+                return 5;
+            }
+
+        } else if (level == 8) {
+            int rand = new Random().nextInt(100);
+            if (rand >= 0 && rand <= 16) {
+                return 1;
+            } else if (rand >= 17 && rand <= 36) {
+                return 2;
+            } else if (rand >= 37 && rand <= 70) {
+                return 3;
+            } else if (rand >= 71 && rand <= 95) {
+                return 4;
+            } else if (rand >= 96 && rand <= 99){
+                return 5;
+            }
+
+        } else if (level == 9) {
+            int rand = new Random().nextInt(100);
+            if (rand >= 0 && rand <= 8) {
+                return 1;
+            } else if (rand >= 9 && rand <= 23) {
+                return 2;
+            } else if (rand >= 24 && rand <= 53) {
+                return 3;
+            } else if (rand >= 54 && rand <= 83) {
+                return 4;
+            } else if (rand >= 84 && rand <= 99){
+                return 5;
+            }
+        }
         return -1;
     }
 
-    public int rollUnit(int cost){
-        int result = 0;
+    public String rollUnit(int cost){
+        String result = "";
         switch (cost) {
 
             case 1:
                 int rand = new Random().nextInt(oneCostNames.length);
-                result = rand;
+                result = oneCostNames[rand];
                 break;
 
             case 2:
                 int rand2 = new Random().nextInt(twoCostNames.length);
-                result = rand2;
+                result = twoCostNames[rand2];
                 break;
 
             case 3:
                 int rand3 = new Random().nextInt(threeCostNames.length);
-                result = rand3;
+                result = threeCostNames[rand3];
                 break;
 
             case 4:
                 int rand4 = new Random().nextInt(fourCostNames.length);
-                result = rand4;
+                result = fourCostNames[rand4];
                 break;
 
             case 5:
                 int rand5 = new Random().nextInt(fiveCostNames.length);
-                result = rand5;
+                result = fiveCostNames[rand5];
                 break;
 
         }
