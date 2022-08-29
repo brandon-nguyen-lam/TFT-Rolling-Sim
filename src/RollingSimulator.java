@@ -1,33 +1,7 @@
 import java.util.Random;
 
 public class RollingSimulator {
-    /*
-    Based on Set 7!
-    Hello! This is the source code for my TFT rolling simulator!
-    The goal of this is to find out the odds of finding a specific unit.
-    This is mostly for figuring out rolling on 7 or 8 and seeing the best outcome in case you're contested.
-    Levels 6-9 will have the code for them but not 1-5 as there are no scenarios where they're needed.
 
-    For some general knowledge, the champion pool is as stands:
-    1 Cost: 29
-    2 Cost: 22
-    3 Cost: 18
-    4 Cost: 12
-    5 Cost: 10
-
-    The total amount of units per cost:
-    1 Cost: 13
-    2 Cost: 13
-    3 Cost: 13
-    4 Cost: 11
-    5 Cost: 8
-
-    For those who do not play TFT, each shop has 5 units in them. The champion pool means that
-    there are only a specific amount of that one champion per its cost. The two main factors
-    in determining what is inside your shop. Your level, which increases the odds of higher cost
-    champions appearing and the other champions in and out of the pool
-
-     */
     public Unit[] shop = new Unit[5];
     public int level; // Decided to make all vars public instead of private because I was too lazy to do getters / setters
     public int oneCostOdds;
@@ -57,9 +31,8 @@ public class RollingSimulator {
     public RollingSimulator(int level){
         this.level = level;
     }
+
     public static void main(String[] args) {
-        // ADD SCANNER INPUT HERE TO ASK FOR LEVELS 6-9
-        // ADD CHECKER TO MAKE SURE THEY GET IT CORRECT
         RollingSimulator sim = new RollingSimulator(7);
         sim.setShopOdds(sim.level);
         System.out.println("You are rolling at level " + sim.level + " with:");
@@ -67,7 +40,7 @@ public class RollingSimulator {
         System.out.println(sim.twoCostOdds + "% odds for a 2 cost");
         System.out.println(sim.threeCostOdds + "% odds for a 3 cost");
         System.out.println(sim.fourCostOdds + "% odds for a 4 cost");
-        System.out.println(sim.fiveCostOdds + "% odds for a 5 cost");
+        System.out.println(sim.fiveCostOdds + "% odds for a 5 cost"+ "\r\n");
 
         for (int i = 0; i < 5; i++){
             int unitCost = sim.rollCost(sim.level);
@@ -75,11 +48,6 @@ public class RollingSimulator {
             Unit shopUnit = new Unit(unitRoll, unitCost, 1);
             sim.shop[i] = shopUnit;
         }
-
-
-
-
-
         sim.displayShop();
     }
 
