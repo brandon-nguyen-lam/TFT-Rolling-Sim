@@ -1,19 +1,21 @@
 import java.util.Random;
+import java.util.ArrayList;
 
 public class RollingSimulator {
 
     public Unit[] shop = new Unit[5];
+    public Unit[] champPool;
     public int level; // Decided to make all vars public instead of private because I was too lazy to do getters / setters
     public int oneCostOdds;
     public int twoCostOdds;
     public int threeCostOdds;
     public int fourCostOdds;
     public int fiveCostOdds;
-    public int oneCostPool = 13*29; // 13 total one-cost units and each of them have 29 copies.
-    public int twoCostPool = 13*22;
-    public int threeCostPool = 13*18;
-    public int fourCostPool = 12*11;
-    public int fiveCostPool = 5*8;
+    public ArrayList<Unit> oneCostPool = new ArrayList<Unit>(); // 13*29 - 13 total one-cost units and each of them have 29 copies.
+    public ArrayList<Unit> twoCostPool = new ArrayList<Unit>(); // 13*22
+    public ArrayList<Unit> threeCostPool = new ArrayList<Unit>(); // 13*18
+    public ArrayList<Unit> fourCostPool = new ArrayList<Unit>(); // 12*11
+    public ArrayList<Unit> fiveCostPool = new ArrayList<Unit>(); // 8*10
     public String[] oneCostNames = new String[]{"Aatrox", "Ezreal","Heimerdinger", "Karma", "Leona",
                                                 "Nidalee", "Sejuani", "Senna", "Sett", "Skarner",
                                                 "Tahm Kench", "Taric", "Vladimir"};
@@ -35,6 +37,7 @@ public class RollingSimulator {
     public static void main(String[] args) {
         RollingSimulator sim = new RollingSimulator(7);
         sim.setShopOdds(sim.level);
+        sim.setChampPool(sim.level);
         System.out.println("You are rolling at level " + sim.level + " with:");
         System.out.println(sim.oneCostOdds + "% odds for a 1 cost");
         System.out.println(sim.twoCostOdds + "% odds for a 2 cost");
@@ -42,13 +45,48 @@ public class RollingSimulator {
         System.out.println(sim.fourCostOdds + "% odds for a 4 cost");
         System.out.println(sim.fiveCostOdds + "% odds for a 5 cost"+ "\r\n");
 
+        sim.shop = sim.shopRoll(sim.level);
+        sim.displayShop();
+        sim.shop = sim.shopRoll(sim.level);
+        sim.displayShop();
+        sim.shop = sim.shopRoll(sim.level);
+        sim.displayShop();
+        sim.shop = sim.shopRoll(sim.level);
+        sim.displayShop();
+        for (int i = 0; i < sim.fourCostPool.size(); i++)
+            System.out.println(sim.fourCostPool.get(i).getName());
+    }
+
+    public Unit[] shopRoll(int level){
+        RollingSimulator sim = new RollingSimulator(this.level);
         for (int i = 0; i < 5; i++){
             int unitCost = sim.rollCost(sim.level);
             String unitRoll = sim.rollUnit(unitCost);
-            Unit shopUnit = new Unit(unitRoll, unitCost, 1);
+            Unit shopUnit = new Unit(unitRoll, unitCost);
+            sim.removeFromPool(unitRoll,unitCost);
             sim.shop[i] = shopUnit;
         }
-        sim.displayShop();
+        return sim.shop;
+    }
+
+    public void removeFromPool(String name, int cost){
+        if (cost == 1){
+            Unit unitRemoved = new Unit(name, cost);
+            oneCostPool.remove(unitRemoved);
+        } else if (cost == 2){
+            Unit unitRemoved = new Unit(name, cost);
+            twoCostPool.remove(unitRemoved);
+        } else if (cost == 3){
+            Unit unitRemoved = new Unit(name, cost);
+            threeCostPool.remove(unitRemoved);
+        } else if (cost == 4){
+            Unit unitRemoved = new Unit(name, cost);
+            fourCostPool.remove(unitRemoved);
+        } else if (cost == 5){
+            Unit unitRemoved = new Unit(name, cost);
+            fiveCostPool.remove(unitRemoved);
+        }
+
     }
 
     public void setShopOdds(int level) {
@@ -178,6 +216,66 @@ public class RollingSimulator {
 
         }
         return result;
+    }
+
+    public void setChampPool(int level){
+        if (level == 6){
+            for (int i = 0; i < 13; i++){
+                for (int j = 0; j < 29; j++){
+                    Unit oneCost = new Unit(oneCostNames[i], 1);
+                    oneCostPool.add(oneCost);
+                }
+            }
+            for (int i = 0; i < 13; i++){
+                for (int j = 0; j < 22; j++){
+                    Unit twoCost = new Unit(twoCostNames[i], 2);
+                    twoCostPool.add(twoCost);
+                }
+            }
+            for (int i = 0; i < 13; i++){
+                for (int j = 0; j < 18; j++){
+                    Unit threeCost = new Unit(threeCostNames[i], 3);
+                    threeCostPool.add(threeCost);
+                }
+            }
+            for (int i = 0; i < 11; i++){
+                for (int j = 0; j < 12; j++){
+                    Unit fourCost = new Unit(fourCostNames[i], 4);
+                    fourCostPool.add(fourCost);
+                }
+            }
+        } else {
+            for (int i = 0; i < 13; i++){
+                for (int j = 0; j < 29; j++){
+                    Unit oneCost = new Unit(oneCostNames[i], 1);
+                    oneCostPool.add(oneCost);
+                }
+            }
+            for (int i = 0; i < 13; i++){
+                for (int j = 0; j < 22; j++){
+                    Unit twoCost = new Unit(twoCostNames[i], 2);
+                    twoCostPool.add(twoCost);
+                }
+            }
+            for (int i = 0; i < 13; i++){
+                for (int j = 0; j < 18; j++){
+                    Unit threeCost = new Unit(threeCostNames[i], 3);
+                    threeCostPool.add(threeCost);
+                }
+            }
+            for (int i = 0; i < 11; i++){
+                for (int j = 0; j < 12; j++){
+                    Unit fourCost = new Unit(fourCostNames[i], 4);
+                    fourCostPool.add(fourCost);
+                }
+            }
+            for (int i = 0; i < 8; i++){
+                for (int j = 0; j < 10; j++){
+                    Unit fiveCost = new Unit(fiveCostNames[i], 5);
+                    fiveCostPool.add(fiveCost);
+                }
+            }
+        }
     }
 
     public void displayShop(){
