@@ -1,10 +1,10 @@
 import java.util.Random;
 import java.util.ArrayList;
+import java.lang.Math;
 
 public class RollingSimulator {
 
     public Unit[] shop = new Unit[5];
-    public Unit[] champPool;
     public int level; // Decided to make all vars public instead of private because I was too lazy to do getters / setters
     public int oneCostOdds;
     public int twoCostOdds;
@@ -32,12 +32,12 @@ public class RollingSimulator {
 
     public RollingSimulator(int level){
         this.level = level;
+        setShopOdds(level);
+        setChampPool(level);
     }
 
     public static void main(String[] args) {
         RollingSimulator sim = new RollingSimulator(7);
-        sim.setShopOdds(sim.level);
-        sim.setChampPool(sim.level);
         System.out.println("You are rolling at level " + sim.level + " with:");
         System.out.println(sim.oneCostOdds + "% odds for a 1 cost");
         System.out.println(sim.twoCostOdds + "% odds for a 2 cost");
@@ -45,46 +45,125 @@ public class RollingSimulator {
         System.out.println(sim.fourCostOdds + "% odds for a 4 cost");
         System.out.println(sim.fiveCostOdds + "% odds for a 5 cost"+ "\r\n");
 
+        //ask unit you want in STRING, ask how many you want in INT, with how much gold Y, and keep level in mind
+        int Odds = sim.calculateOdds(sim.level, "Corki", 4, 1, 50);
+        System.out.println("Your odds of hitting 1 Corki's with 50g at level 7 is " + Odds);
+        sim.removeFromPool("Corki", 4);
+        sim.removeFromPool("Corki", 4);
+        sim.removeFromPool("Corki", 4);
+        for (int k = 0; k < 30; k++){
+            sim.shop = sim.shopRoll(sim.level);
+        }
         sim.shop = sim.shopRoll(sim.level);
         sim.displayShop();
-        sim.shop = sim.shopRoll(sim.level);
-        sim.displayShop();
-        sim.shop = sim.shopRoll(sim.level);
-        sim.displayShop();
-        sim.shop = sim.shopRoll(sim.level);
-        sim.displayShop();
-        for (int i = 0; i < sim.fourCostPool.size(); i++)
+
+        for (int i = 0; i < sim.fourCostPool.size(); i++) // loop to show champ pool
             System.out.println(sim.fourCostPool.get(i).getName());
     }
 
-    public Unit[] shopRoll(int level){
-        RollingSimulator sim = new RollingSimulator(this.level);
-        for (int i = 0; i < 5; i++){
-            int unitCost = sim.rollCost(sim.level);
-            String unitRoll = sim.rollUnit(unitCost);
-            Unit shopUnit = new Unit(unitRoll, unitCost);
-            sim.removeFromPool(unitRoll,unitCost);
-            sim.shop[i] = shopUnit;
+    public int calculateOdds(int level, String unit,int cost, int amount, double gold){
+        double champsInPool = howMany(cost, unit);
+        double poolSize = 0;
+        double percent = 0;
+        gold = Math.floorDiv((int) gold,2);
+        int result = 100;
+        if (cost == 1){
+            poolSize = oneCostPool.size();
+        } else if (cost == 2) {
+            poolSize = twoCostPool.size();
+        } else if (cost == 3){
+            poolSize = threeCostPool.size();
+        } else if (cost == 4){
+            poolSize = fourCostPool.size();
+        } else if (cost == 5){
+            poolSize = fiveCostPool.size();
         }
-        return sim.shop;
+
+        for (int i = 0; i < amount; i++){
+            percent = (champsInPool - i) / poolSize / fourCostOdds * 100;
+            result *= Math.pow(percent, (gold*5)-1) * (Math.pow(1 - percent, 1));
+            removeFromPool(unit, cost);
+        }
+        return result;
+        //units left in pool divided by the entire cost pool
+        //binomial distribution
+        // for loop at the end with amount as the interval
     }
 
-    public void removeFromPool(String name, int cost){
+    public double howMany(int cost, String unit) {
+        double amt = 0;
+        if (cost == 1) {
+            for (int i = 0; i < oneCostPool.size(); i++) {
+                if (oneCostPool.get(i).getName().equals(unit)) {
+                    amt++;
+                }
+            }
+        } else if (cost == 2) {
+            for (int i = 0; i < twoCostPool.size(); i++) {
+                if (twoCostPool.get(i).getName().equals(unit)) {
+                    amt++;
+                }
+            }
+        } else if (cost == 3) {
+            for (int i = 0; i < threeCostPool.size(); i++) {
+                if (threeCostPool.get(i).getName().equals(unit)) {
+                    amt++;
+                }
+            }
+        } else if (cost == 4) {
+            for (int i = 0; i < fourCostPool.size(); i++) {
+                if (fourCostPool.get(i).getName().equals(unit)) {
+                    amt++;
+                }
+            }
+        } else if (cost == 5) {
+            for (int i = 0; i < fiveCostPool.size(); i++) {
+                if (fiveCostPool.get(i).getName().equals(unit)) {
+                    amt++;
+                }
+            }
+        }
+        return amt;
+    }
+
+    public Unit[] shopRoll(int level){
+        for (int i = 0; i < 5; i++){
+            int unitCost = rollCost(level);
+            String unitRoll = rollUnit(unitCost);
+            Unit shopUnit = new Unit(unitRoll, unitCost);
+            // removeFromPool(unitRoll,unitCost); if my sim accounted for boards this would be uncommented.
+            shop[i] = shopUnit;
+        }
+        return shop;
+    }
+
+    public void removeFromPool(String name, int cost){ // Time complexity of n^2, try to remake this to n
+        int counter = 0;
         if (cost == 1){
-            Unit unitRemoved = new Unit(name, cost);
-            oneCostPool.remove(unitRemoved);
+            while (oneCostPool.get(counter).getName() != name){
+                counter++;
+            }
+            oneCostPool.remove(counter);
         } else if (cost == 2){
-            Unit unitRemoved = new Unit(name, cost);
-            twoCostPool.remove(unitRemoved);
+            while (twoCostPool.get(counter).getName() != name){
+                counter++;
+            }
+            twoCostPool.remove(counter);
         } else if (cost == 3){
-            Unit unitRemoved = new Unit(name, cost);
-            threeCostPool.remove(unitRemoved);
+            while (threeCostPool.get(counter).getName() != name){
+                counter++;
+            }
+            threeCostPool.remove(counter);
         } else if (cost == 4){
-            Unit unitRemoved = new Unit(name, cost);
-            fourCostPool.remove(unitRemoved);
+            while (fourCostPool.get(counter).getName() != name){
+                counter++;
+            }
+            fourCostPool.remove(counter);
         } else if (cost == 5){
-            Unit unitRemoved = new Unit(name, cost);
-            fiveCostPool.remove(unitRemoved);
+            while (fiveCostPool.get(counter).getName() != name){
+                counter++;
+            }
+            fiveCostPool.remove(counter);
         }
 
     }
@@ -207,6 +286,7 @@ public class RollingSimulator {
             case 4:
                 int rand4 = new Random().nextInt(fourCostNames.length);
                 result = fourCostNames[rand4];
+                System.out.println(result + " rolled.");
                 break;
 
             case 5:
