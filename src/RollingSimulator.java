@@ -46,7 +46,7 @@ public class RollingSimulator {
         System.out.println(sim.fiveCostOdds + "% odds for a 5 cost"+ "\r\n");
 
         //ask unit you want in STRING, ask how many you want in INT, with how much gold Y, and keep level in mind
-        int Odds = sim.calculateOdds(sim.level, "Corki", 4, 1, 50);
+        float Odds = sim.calculateOdds(sim.level, "Corki", 4, 1, 50);
         System.out.println("Your odds of hitting 1 Corki's with 50g at level 7 is " + Odds);
         sim.removeFromPool("Corki", 4);
         sim.removeFromPool("Corki", 4);
@@ -61,37 +61,62 @@ public class RollingSimulator {
             System.out.println(sim.fourCostPool.get(i).getName());
     }
 
-    public int calculateOdds(int level, String unit,int cost, int amount, double gold){
-        double champsInPool = howMany(cost, unit);
-        double poolSize = 0;
+    public float calculateOdds(int level, String unit,int cost, int amount, double gold){
+        int champsInPool = howMany(cost, unit);
+        int poolSize = 0;
         double percent = 0;
         gold = Math.floorDiv((int) gold,2);
+        gold = gold * 5;
         int result = 100;
+        int costOdds = 0;
         if (cost == 1){
             poolSize = oneCostPool.size();
+            costOdds = oneCostOdds;
         } else if (cost == 2) {
             poolSize = twoCostPool.size();
+            costOdds = twoCostOdds;
         } else if (cost == 3){
             poolSize = threeCostPool.size();
+            costOdds = threeCostOdds;
         } else if (cost == 4){
             poolSize = fourCostPool.size();
+            costOdds = fourCostOdds;
         } else if (cost == 5){
             poolSize = fiveCostPool.size();
+            costOdds = fiveCostOdds;
         }
 
-        for (int i = 0; i < amount; i++){
-            percent = (champsInPool - i) / poolSize / fourCostOdds * 100;
-            result *= Math.pow(percent, (gold*5)-1) * (Math.pow(1 - percent, 1));
-            removeFromPool(unit, cost);
-        }
-        return result;
+        float r1 = divFactorials(champsInPool,amount); // guaranteed correct
+        float r2 = divFactorials(poolSize - champsInPool, (int) (gold - amount));
+        float r3 = divFactorials(poolSize, (int) gold);
+        r1 = r1*r2/r3;
+
+        return r1;
+//        for (int i = 0; i < amount; i++){
+//            percent = (champsInPool - i) / poolSize / costOdds * 100;
+//            result *= Math.pow(percent, (gold*5)-1) * (Math.pow(1 - percent, 1));
+//
+//            removeFromPool(unit, cost);
+//        }
+//        int f1 = (int) ((gold*5)-1);
+//        int f2 = (int) ((gold*5)-amount);
+//        f1 = f1/f2;
+//        return f1*result;
         //units left in pool divided by the entire cost pool
-        //binomial distribution
+        //hypergeometric distribution
         // for loop at the end with amount as the interval
     }
 
-    public double howMany(int cost, String unit) {
-        double amt = 0;
+    public int divFactorials (int n, int k) { // per stackoverflow
+        int result = 1;
+        for (int i = n; i > k; i--) {
+        result *= i;
+        }
+    return Math.abs(result);
+    }
+
+    public int howMany(int cost, String unit) {
+        int amt = 0;
         if (cost == 1) {
             for (int i = 0; i < oneCostPool.size(); i++) {
                 if (oneCostPool.get(i).getName().equals(unit)) {
