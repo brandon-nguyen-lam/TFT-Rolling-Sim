@@ -10,7 +10,7 @@ The calculations were done using a hypergeometric distribution.
 * Units out of the pool  
   
 ## Things that this does not account for: ##
-* Gold you have, I attempted the math and I couldn't get it.  
+* Gold you have, I attempted the math and I couldn't get it. The formula is (gold // 2) * 5.
 * Other people's boards and shops.
 
 # For some general knowledge, the champion pool is as stands: #
