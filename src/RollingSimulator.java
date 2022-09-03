@@ -12,11 +12,13 @@ public class RollingSimulator {
     public int threeCostOdds;
     public int fourCostOdds;
     public int fiveCostOdds;
+
     public ArrayList<Unit> oneCostPool = new ArrayList<Unit>(); // 13*29 - 13 total one-cost units and each of them have 29 copies.
     public ArrayList<Unit> twoCostPool = new ArrayList<Unit>(); // 13*22
     public ArrayList<Unit> threeCostPool = new ArrayList<Unit>(); // 13*18
     public ArrayList<Unit> fourCostPool = new ArrayList<Unit>(); // 12*11
     public ArrayList<Unit> fiveCostPool = new ArrayList<Unit>(); // 8*10
+
     public String[] oneCostNames = new String[]{"Aatrox", "Ezreal","Heimerdinger", "Karma", "Leona",
                                                 "Nidalee", "Sejuani", "Senna", "Sett", "Skarner",
                                                 "Tahm Kench", "Taric", "Vladimir"};
