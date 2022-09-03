@@ -1,11 +1,12 @@
+import java.math.RoundingMode;
 import java.util.Random;
 import java.util.ArrayList;
-import java.lang.Math;
+import java.math.BigDecimal;
 
 public class RollingSimulator {
 
     public Unit[] shop = new Unit[5];
-    public int level; // Decided to make all vars public instead of private because I was too lazy to do getters / setters
+    public int level;
     public int oneCostOdds;
     public int twoCostOdds;
     public int threeCostOdds;
@@ -37,7 +38,7 @@ public class RollingSimulator {
     }
 
     public static void main(String[] args) {
-        RollingSimulator sim = new RollingSimulator(7);
+        RollingSimulator sim = new RollingSimulator(7); // CHANGE LEVEL HERE FROM 6-9.
         System.out.println("You are rolling at level " + sim.level + " with:");
         System.out.println(sim.oneCostOdds + "% odds for a 1 cost");
         System.out.println(sim.twoCostOdds + "% odds for a 2 cost");
@@ -45,30 +46,19 @@ public class RollingSimulator {
         System.out.println(sim.fourCostOdds + "% odds for a 4 cost");
         System.out.println(sim.fiveCostOdds + "% odds for a 5 cost"+ "\r\n");
 
-        //ask unit you want in STRING, ask how many you want in INT, with how much gold Y, and keep level in mind
-        float Odds = sim.calculateOdds(sim.level, "Corki", 4, 1, 50);
-        System.out.println("Your odds of hitting 1 Corki's with 50g at level 7 is " + Odds);
-        sim.removeFromPool("Corki", 4);
-        sim.removeFromPool("Corki", 4);
-        sim.removeFromPool("Corki", 4);
-        for (int k = 0; k < 30; k++){
-            sim.shop = sim.shopRoll(sim.level);
-        }
-        sim.shop = sim.shopRoll(sim.level);
-        sim.displayShop();
+        BigDecimal Odds = sim.calculateOdds(sim.level, "Corki", 4, 1, 2); // CHANGE AMOUNT AND UNIT NAME HERE DO NOT CHANGE REST
 
-        for (int i = 0; i < sim.fourCostPool.size(); i++) // loop to show champ pool
-            System.out.println(sim.fourCostPool.get(i).getName());
+        System.out.println("At level " + sim.level + ", the odds of having at least 1 Corki per shop is " + Odds + "%");
     }
 
-    public float calculateOdds(int level, String unit,int cost, int amount, double gold){
+    public BigDecimal calculateOdds(int level, String unit, int cost, int amount, int gold){
+
         int champsInPool = howMany(cost, unit);
         int poolSize = 0;
         double percent = 0;
-        gold = Math.floorDiv((int) gold,2);
-        gold = gold * 5;
-        int result = 100;
+        gold = gold / 2 * 5; // I saw another post where they did this calculation, but I couldn't get it to work.
         int costOdds = 0;
+
         if (cost == 1){
             poolSize = oneCostPool.size();
             costOdds = oneCostOdds;
@@ -86,37 +76,53 @@ public class RollingSimulator {
             costOdds = fiveCostOdds;
         }
 
-        float r1 = divFactorials(champsInPool,amount); // guaranteed correct
-        float r2 = divFactorials(poolSize - champsInPool, (int) (gold - amount));
-        float r3 = divFactorials(poolSize, (int) gold);
-        r1 = r1*r2/r3;
+        BigDecimal r1 = nCr(champsInPool,amount); // hypergeometric distribution.
+        BigDecimal r2 = nCr(poolSize - champsInPool, gold - amount);
+        BigDecimal r3 = nCr(poolSize, gold);
+
+        r1 = r1.multiply(r2);
+        float chance = (float) costOdds;
+        r1 = r1.multiply(BigDecimal.valueOf(chance));
+        r1 = r1.divide(r3,5, RoundingMode.HALF_UP);
 
         return r1;
-//        for (int i = 0; i < amount; i++){
-//            percent = (champsInPool - i) / poolSize / costOdds * 100;
-//            result *= Math.pow(percent, (gold*5)-1) * (Math.pow(1 - percent, 1));
-//
-//            removeFromPool(unit, cost);
-//        }
-//        int f1 = (int) ((gold*5)-1);
-//        int f2 = (int) ((gold*5)-amount);
-//        f1 = f1/f2;
-//        return f1*result;
-        //units left in pool divided by the entire cost pool
-        //hypergeometric distribution
-        // for loop at the end with amount as the interval
     }
 
-    public int divFactorials (int n, int k) { // per stackoverflow
-        int result = 1;
+    public BigDecimal divFactorials (int n, int k) {
+
+        BigDecimal result = BigDecimal.valueOf(1);
         for (int i = n; i > k; i--) {
-        result *= i;
+            result = result.multiply(BigDecimal.valueOf(i));
         }
-    return Math.abs(result);
+
+    return result;
+    }
+
+    public BigDecimal factorial(int n){
+
+        BigDecimal fact = BigDecimal.ONE;
+        for (int i = n; i > 0; i--) {
+            fact = fact.multiply(BigDecimal.valueOf(i));
+        }
+
+        return fact;
+    }
+
+    public BigDecimal nCr(int n, int r) {
+
+        BigDecimal n2 = factorial(n);
+        BigDecimal r2 = factorial(r);
+        BigDecimal r3 = factorial(n - r);
+
+        n2 = n2.divide(r2);
+        n2 = n2.divide(r3);
+
+        return n2;
     }
 
     public int howMany(int cost, String unit) {
         int amt = 0;
+
         if (cost == 1) {
             for (int i = 0; i < oneCostPool.size(); i++) {
                 if (oneCostPool.get(i).getName().equals(unit)) {
@@ -148,6 +154,7 @@ public class RollingSimulator {
                 }
             }
         }
+
         return amt;
     }
 
@@ -156,14 +163,14 @@ public class RollingSimulator {
             int unitCost = rollCost(level);
             String unitRoll = rollUnit(unitCost);
             Unit shopUnit = new Unit(unitRoll, unitCost);
-            // removeFromPool(unitRoll,unitCost); if my sim accounted for boards this would be uncommented.
             shop[i] = shopUnit;
         }
         return shop;
     }
 
-    public void removeFromPool(String name, int cost){ // Time complexity of n^2, try to remake this to n
+    public void removeFromPool(String name, int cost){
         int counter = 0;
+
         if (cost == 1){
             while (oneCostPool.get(counter).getName() != name){
                 counter++;
