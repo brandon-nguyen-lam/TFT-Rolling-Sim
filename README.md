@@ -2,7 +2,7 @@
 The goal of this is to find out the odds of finding a specific unit.
 This is mostly for figuring out rolling on 7 or 8 and seeing the best outcome in case you're contested.
 Levels 6-9 will have the code for them but not 1-5 as there are no scenarios where they're needed.
-The calculations were done using a hypergeometric distribution. ##
+The calculations were done using a hypergeometric distribution.
   
 ## Things that this can account for:  ##
 * Level  
