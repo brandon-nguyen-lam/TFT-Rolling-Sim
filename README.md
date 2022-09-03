@@ -28,10 +28,10 @@ in determining what is inside your shop. Your level, which increases the odds of
 champions appearing and the other champions in and out of the pool.
 
 Things that this can account for:  
-*Level  
-*Buying a unit and replacement rolls  
-*Units out of the pool  
+* Level  
+* Buying a unit and replacement rolls  
+* Units out of the pool  
   
 Things that this does not account for:  
-*Gold you have, I attempted the math and I couldn't get it.  
+* Gold you have, I attempted the math and I couldn't get it.  
 * Other people's boards and shops.
