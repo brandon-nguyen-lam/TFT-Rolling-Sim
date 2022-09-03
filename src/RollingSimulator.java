@@ -12,7 +12,6 @@ public class RollingSimulator {
     public int threeCostOdds;
     public int fourCostOdds;
     public int fiveCostOdds;
-
     public ArrayList<Unit> oneCostPool = new ArrayList<Unit>(); // 13*29 - 13 total one-cost units and each of them have 29 copies.
     public ArrayList<Unit> twoCostPool = new ArrayList<Unit>(); // 13*22
     public ArrayList<Unit> threeCostPool = new ArrayList<Unit>(); // 13*18
