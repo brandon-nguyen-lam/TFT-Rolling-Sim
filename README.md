@@ -14,6 +14,7 @@ The calculations were done using a hypergeometric distribution. ##
 * Other people's boards and shops.
 
 # For some general knowledge, the champion pool is as stands: #
+The total number of copies of a unit:
 * 1 Cost: 29  
 * 2 Cost: 22  
 * 3 Cost: 18  
